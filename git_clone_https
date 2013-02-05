@@ -1,0 +1,29 @@
+#!/bin/bash
+# this script will clone the hns repository and configure the https settings
+#PWD="pwd"
+
+echo "username:"
+read username
+echo "password:"
+read -s password
+
+echo ""
+if [ $# == 1 ]
+then
+  repo=$1
+fi
+
+git init $repo
+echo "[http]" >> $repo/.git/config
+echo "  sslCAInfo=$PWD/$repo/.git/<servername>.crt" >> $repo/.git/config
+
+echo "[Entering $PWD/$repo/.git/]"
+cd $repo/.git/
+wget --user=$username --password=$password https://<path/to/cert>.crt --no-check-certificate
+
+cd ..
+echo "[Entering $PWD]"
+sleep .5
+git remote add origin https://$username@<path/to/repo>
+git fetch https://$username:$password@<path/to/repo>
+git pull https://$username:$password@<path/to/repo>
